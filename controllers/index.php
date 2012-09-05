@@ -33,7 +33,8 @@ class IndexController extends StudipController {
         array('BuddyBronze', 'BuddySilver', 'BuddyGold'),
         array('NewsBronze', 'NewsSilver', 'NewsGold'),
         array('ForumBronze','ForumSilver', 'ForumGold'),
-        array('CoreGroupGold')
+        array('CoreGroupGold'),
+        array('AssociationGold'),
     );
     
     function before_filter(&$action, &$args)
