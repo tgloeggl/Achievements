@@ -23,4 +23,8 @@ class AchievementCoreGroupGold implements Achievement {
     public static function getDescription() {
         return _('Diese Trophäe erhalten nur CoreGroup-Mitglieder.');
     }
+    
+    public static function getCustomImage() {
+        return 'gold_medal.png';
+    }
 }

@@ -11,6 +11,7 @@
  * @license     http://www.gnu.org/licenses/gpl-2.0.html GPL version 2
  * @category    Stud.IP
  */
+
 class AchievementAssociationGold implements Achievement {
 
     public static function hasMetRequirements($user_id) {           
@@ -33,5 +34,9 @@ class AchievementAssociationGold implements Achievement {
 
     public static function getDescription() {
         return _('Diese Trophäe erhalten nur Vereins-Mitglieder.');
+    }
+    
+    public static function getCustomImage() {
+        return 'gold_medal.png';
     }
 }

@@ -11,6 +11,7 @@
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GPL version 3
  * @category    Stud.IP
  */
+
 class AchievementBuddyBronze implements Achievement {
 
     public static function hasMetRequirements($user_id) {

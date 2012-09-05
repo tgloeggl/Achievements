@@ -16,27 +16,9 @@
  */
 
 require_once 'app/controllers/studip_controller.php';
-require_once $this->trails_root . '/models/AchievementsModel.php';
-require_once $this->trails_root . '/models/Achievement.php';
-require_once $this->trails_root . '/models/Friends.php';
-
 
 class IndexController extends StudipController {
 
-    // registered Achievements
-    static $registered_achievements = array(
-        array('Login'),
-        array('PictureSilver'),
-        array('CreateStudygroup'),
-        array('EnterSeminar'),
-        array('VisitSchedule'),
-        array('BuddyBronze', 'BuddySilver', 'BuddyGold'),
-        array('NewsBronze', 'NewsSilver', 'NewsGold'),
-        array('ForumBronze','ForumSilver', 'ForumGold'),
-        array('CoreGroupGold'),
-        array('AssociationGold'),
-    );
-    
     function before_filter(&$action, &$args)
     {
         parent::before_filter($action, $args);
@@ -56,27 +38,18 @@ class IndexController extends StudipController {
         // get already received achievements
         $received = AchievementsModel::getAchievements($user_id);
 
-        foreach (self::$registered_achievements as $achievements) {
+        foreach (Achievements::$registered_achievements as $achievements) {
             foreach ($achievements as $achievement_id) {
-                if (!in_array($achievement_id, $received)) {
+                if (!$received[$achievement_id]) {
                     $counter++;
                     $class_name = 'Achievement' . $achievement_id;
-                    if (strpos($achievement_id, 'Silver') !== false) {
-                        $picture = 'silver_trophy.png';
-                    } else if (strpos($achievement_id, 'Gold') !== false) {
-                        $picture = 'gold_trophy.png';
-                    } else {
-                        $picture = 'bronze_trophy.png';
-                    }
-
-                    require_once $this->dispatcher->trails_root . '/achievements/' . $class_name . '.php';
 
                     if (call_user_func(array($class_name, 'hasMetRequirements'), $user_id)) {
                         AchievementsModel::giveAchievement($achievement_id);
                         $title = call_user_func(array($class_name, 'getTitle'));
                         $this->trophys[] = array(
                             'title'   => $title,
-                            'picture' => $this->picturepath .'/'. $picture
+                            'picture' => AchievementsModel::getImage($class_name)
                         );
                     }
                     
@@ -88,7 +61,7 @@ class IndexController extends StudipController {
 
     function achievements_action()
     {
-        Navigation::activateItem('/profile/trohpies/index');
+        Navigation::activateItem('/profile/trophies/index');
 
         $layout = $GLOBALS['template_factory']->open('layouts/base_without_infobox');
         $this->set_layout($layout);
@@ -104,27 +77,17 @@ class IndexController extends StudipController {
         );
 
         // get all possible achievements
-        foreach (self::$registered_achievements as $achievements) {
+        foreach (AchievementsModel::getAllAchievements() as $achievements) {
             foreach ($achievements as $achievement_id) {
                 $class_name = 'Achievement' . $achievement_id;
-                require_once $this->dispatcher->trails_root . '/achievements/' . $class_name . '.php';
 
-                if (strpos($achievement_id, 'Silver') !== false) {
-                    $picture = 'silver_trophy.png';
-                } else if (strpos($achievement_id, 'Gold') !== false) {
-                    $picture = 'gold_trophy.png';
-                } else {
-                    $picture = 'bronze_trophy.png';
-                }
-
-
-                $has_trophy = in_array($achievement_id, $received);                    
+                $has_trophy = $received[$achievement_id];
                 $this->trophys[$has_trophy ? 'full' : 'empty'][] = array(
                     'title'       => call_user_func(array($class_name, 'getTitle')),
                     'description' => call_user_func(array($class_name, 'getDescription')),
                     'progress'    => call_user_func(array($class_name, 'getProgress'), $GLOBALS['user']->id),
                     'received'    => $has_trophy,
-                    'picture'     => $picture
+                    'picture'     => AchievementsModel::getImage($class_name)
                 );
             }
         }
@@ -132,45 +95,50 @@ class IndexController extends StudipController {
     
     function compare_action($compare_with = null) {
         
-        Navigation::activateItem('/profile/trohpies/compare');
+        Navigation::activateItem('/profile/trophies/compare');
 
         $layout = $GLOBALS['template_factory']->open('layouts/base');
         $this->set_layout($layout);
+        $this->compare_with = $compare_with;
 
         PageLayout::setTitle('Trophäen meiner Freunde');
-        
-        if ($compare_with) {
-            foreach (array($compare_with, $GLOBALS['user']->id) as $user_id) {
-                $received = AchievementsModel::getAchievements($user_id);
-
-                foreach ($received as $achievement_id) {
-                    $class_name = 'Achievement' . $achievement_id;
-                    require_once $this->dispatcher->trails_root . '/achievements/' . $class_name . '.php';
-
-                    // #TODO: fix AchievementsModel::getAchievements to fetch the type as well
-
-                    if (strpos($achievement_id, 'Silver') !== false) {
-                        $picture = 'silver_trophy.png';
-                    } else if (strpos($achievement_id, 'Gold') !== false) {
-                        $picture = 'gold_trophy.png';
-                    } else {
-                        $picture = 'bronze_trophy.png';
-                    }
-
-
-                    $this->trophys[$user_id][$achievement_id] = array(
-                        'title'       => call_user_func(array($class_name, 'getTitle')),
-                        'picture'     => $picture
-                    );
-                }
-            }
-        }
         
         foreach ((array)AchievementsModel::getAchievementsForUsers(Friends::get($GLOBALS['user']->id)) as $data) {
             $this->my_friends[$data['user_id']][$data['type']] = $data['trophys'];
         }
         
-        $this->all_achievements = self::$registered_achievements;
-        $this->compare_with = $compare_with;
+        foreach (array($this->compare_with, $GLOBALS['user']->id) as $user_id) {
+            $this->achievements[$user_id] = AchievementsModel::getAchievements($user_id);
+        }
+        
+        $this->all_achievements = AchievementsModel::getAllAchievements();
+        $this->types = AchievementsModel::getAllTypes();
+    }
+    
+    function single_compare_action()
+    {
+        Navigation::activateItem('/profile/trophies');
+
+        $layout = $GLOBALS['template_factory']->open('layouts/base');
+        $this->set_layout($layout);
+
+        PageLayout::setTitle('Trophäenvergleich');
+
+        $this->compare_with = get_userid(Request::get('username'));
+
+        foreach ((array)AchievementsModel::getAchievementsForUsers(Friends::get($GLOBALS['user']->id)) as $data) {
+            $this->my_friends[$data['user_id']][$data['type']] = $data['trophys'];
+        }
+        
+        foreach (array($this->compare_with, $GLOBALS['user']->id) as $user_id) {
+            $achievements[$user_id] = AchievementsModel::getAchievements($user_id);
+        }
+
+        $this->all_achievements = AchievementsModel::getAllAchievements();
+    }
+    
+    function js_action()
+    {
+        
     }
 }

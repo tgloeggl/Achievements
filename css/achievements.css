@@ -1,0 +1,31 @@
+div.achieve-profile:hover {
+    opacity: 0.7;
+}
+
+table.achievement_list {
+    border-collapse: collapse;
+    width: 99%;
+}
+
+table.achievement_list thead td {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+table.achievement_list tbody td {
+    padding: 4px;
+}
+
+
+table.achievement_list tbody tr:nth-child(2n+1) {
+    background-color: #DEE2E8;
+}
+
+div.compare {
+    background-color: red;
+    border-radius: 10px;
+}
+
+img.small-trophy {
+    height: 1em;
+}

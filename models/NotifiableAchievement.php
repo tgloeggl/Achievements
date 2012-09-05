@@ -1,11 +1,9 @@
 <?php
 /**
- * Achievement.php - Achievement interface
+ * NotifiableAchievement.php - NotifiableAchievement interface
  *
- * Use this interface, if you need an Achievement who checks if the necessary
- * conditions are mt on every page-load.
- * 
- * !!USE THE "NotifiableAchievement" INTERFACE WHERE POSSIBLE!!
+ * Use this interface, if you want an Achievement who checks only when a
+ * notification is fired.
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,7 +15,7 @@
  * @category    Stud.IP
  */
 
-interface Achievement {
+interface NotifiableAchievement {
     /**
      * Check, if the passed user has meet the requirements
      * 
@@ -50,4 +48,10 @@ interface Achievement {
      * @return string
      */
     public static function getDescription();
+    
+    /**
+     * This function is called as early as possible at every page-load of Stud.IP.
+     * Place your NotificationCenter-registrations here
+     */
+    public static function register();
 }
