@@ -109,13 +109,15 @@ class IndexController extends StudipController {
         foreach ((array)AchievementsModel::getAchievementsForUsers(Friends::get($GLOBALS['user']->id)) as $data) {
             $this->my_friends[$data['user_id']][$data['type']] = $data['trophys'];
             $xp = 0;
-            switch ($data['type']) {
-                case 'bronze_trophy': $xp = 10;
-                case 'silver_trophy': $xp = 50;
-                case 'golder_trophy': $xp = 100;
-                case 'bronze_medal':  $xp = 200;
 
+            switch ($data['type']) {
+                case 'bronze_trophy': $xp = 10;break;
+                case 'silver_trophy': $xp = 50;break;
+                case 'gold_trophy': $xp = 100;break;
+                case 'bronze_medal':  $xp = 200;break;
+                case 'gold_medal':  $xp = 1000;break;
             }
+
 
             $this->experience[$data['user_id']] += $xp;
         }
@@ -126,12 +128,13 @@ class IndexController extends StudipController {
 
         foreach ($this->achievements[$GLOBALS['user']->id] as $type) {
             $xp = 0;
-            switch ($type) {
-                case 'bronze_trophy': $xp = 10;
-                case 'silver_trophy': $xp = 50;
-                case 'golder_trophy': $xp = 100;
-                case 'bronze_medal':  $xp = 200;
 
+            switch ($type) {
+                case 'bronze_trophy': $xp = 10;break;
+                case 'silver_trophy': $xp = 50;break;
+                case 'gold_trophy': $xp = 100;break;
+                case 'bronze_medal':  $xp = 200;break;
+                case 'gold_medal':  $xp = 1000;break;
             }
 
             $this->experience[$GLOBALS['user']->id] += $xp;
