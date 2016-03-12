@@ -124,8 +124,22 @@ class IndexController extends StudipController {
             $this->achievements[$user_id] = AchievementsModel::getAchievements($user_id);
         }
 
+        foreach ($this->achievements[$GLOBALS['user']->id] as $type) {
+            $xp = 0;
+            switch ($type) {
+                case 'bronze_trophy': $xp = 10;
+                case 'silver_trophy': $xp = 50;
+                case 'golder_trophy': $xp = 100;
+                case 'bronze_medal':  $xp = 200;
+
+            }
+
+            $this->experience[$GLOBALS['user']->id] += $xp;
+        }
+
         $this->all_achievements = AchievementsModel::getAllAchievements();
         $this->types = AchievementsModel::getAllTypes();
+        $this->user_id = $GLOBALS['user']->id;
     }
 
     function single_compare_action()

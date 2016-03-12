@@ -9,6 +9,11 @@ $infobox['content'] = array(
                 'text' => _('Wähle einen deiner Freunde zum Vergleichen eurer Trophäen.'),
                 'icon' => 'icons/16/black/info.png'
             ),
+
+            array(
+                'text' => sprintf(_('Du hast %s XP!'), $experience[$user_id] ),
+                'icon' => 'icons/16/black/info.png'
+            )
         )
     )
 );
