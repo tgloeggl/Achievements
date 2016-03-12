@@ -21,7 +21,7 @@ $infobox['content'] = array(
     <div class="gritter-top"></div>
     <div class="gritter-item" style="min-height: 50px;">
         <?= Avatar::getAvatar($user_id)->getImageTag(Avatar::MEDIUM, array('class' => 'gritter-image')) ?>
-    
+
         <div class="gritter-with-image">
             <span class="gritter-title"><?= get_username($user_id) ?><span>
             <br>
@@ -32,6 +32,10 @@ $infobox['content'] = array(
                     <?= $friend_trophys[$type] | '0' ?>
                     <? endif ?>
                 <? endforeach ?>
+            </p>
+
+            <p>
+                XP: <?= $this->experience[$user_id] ?>
             </p>
         </div>
     </div>

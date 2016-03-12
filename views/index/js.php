@@ -25,7 +25,7 @@ jQuery(document).ready(function(){
     }
 
     jQuery.ajax({
-        url: STUDIP.URLHelper.getURL('plugins.php/achievements/index'),
+        url: STUDIP.URLHelper.getURL('plugins.php/achievements/index/index'),
             success: function(data) {
                 jQuery('body').append(data);
             }

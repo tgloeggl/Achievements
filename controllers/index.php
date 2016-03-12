@@ -38,7 +38,6 @@ class IndexController extends StudipController {
 
         // get already received achievements
         $received = AchievementsModel::getAchievements($user_id);
-        $xp = 0;
 
         foreach (Achievements::$registered_achievements as $achievements) {
             foreach ($achievements as $achievement_id) {
@@ -53,16 +52,6 @@ class IndexController extends StudipController {
                             'title'   => $title,
                             'picture' => AchievementsModel::getImage($class_name)
                         );
-
-                        if (strpos(strtolower($class_name), 'bronze')) {
-                            $xp += 10;
-                        } else if (strpos(strtolower($class_name), 'silver')) {
-                            $xp += 50;
-                        } else if (strpos(strtolower($class_name), 'gold')) {
-                            $xp += 200;
-                        } else {
-                            $xp += 40;
-                        }
                     }
 
                     break;
@@ -113,11 +102,22 @@ class IndexController extends StudipController {
         $layout = $GLOBALS['template_factory']->open('layouts/base');
         $this->set_layout($layout);
         $this->compare_with = $compare_with;
+        $this->experience = array();
 
         PageLayout::setTitle('Trophäen meiner Freunde');
 
         foreach ((array)AchievementsModel::getAchievementsForUsers(Friends::get($GLOBALS['user']->id)) as $data) {
             $this->my_friends[$data['user_id']][$data['type']] = $data['trophys'];
+            $xp = 0;
+            switch ($data['type']) {
+                case 'bronze_trophy': $xp = 10;
+                case 'silver_trophy': $xp = 50;
+                case 'golder_trophy': $xp = 100;
+                case 'bronze_medal':  $xp = 200;
+
+            }
+
+            $this->experience[$data['user_id']] += $xp;
         }
 
         foreach (array($this->compare_with, $GLOBALS['user']->id) as $user_id) {
