@@ -32,6 +32,7 @@ class IndexController extends StudipController {
 
     function index_action($user_id = null)
     {
+        $this->set_layout(null);
         // check for newly received trophys
         if (!$user_id) $user_id = $GLOBALS['user']->id;
 
@@ -53,11 +54,11 @@ class IndexController extends StudipController {
                             'picture' => AchievementsModel::getImage($class_name)
                         );
 
-                        if (strpos(strtolower($class_name)) == 'bronze') {
+                        if (strpos(strtolower($class_name), 'bronze')) {
                             $xp += 10;
-                        } else if (strpos(strtolower($class_name)) == 'silver') {
+                        } else if (strpos(strtolower($class_name), 'silver')) {
                             $xp += 50;
-                        } else if (strpos(strtolower($class_name)) == 'gold') {
+                        } else if (strpos(strtolower($class_name), 'gold')) {
                             $xp += 200;
                         } else {
                             $xp += 40;
@@ -72,6 +73,7 @@ class IndexController extends StudipController {
 
     function achievements_action()
     {
+
         Navigation::activateItem('/profile/trophies/index');
 
         $layout = $GLOBALS['template_factory']->open('layouts/base_without_infobox');
@@ -150,6 +152,6 @@ class IndexController extends StudipController {
 
     function js_action()
     {
-
+        $this->set_layout(null);
     }
 }

@@ -8,7 +8,7 @@ STUDIP.Achievements = {
             text: title,
             time: ''
         });
-        
+
         setTimeout(function(){
             $.gritter.remove(unique_id, {
                 fade: true,
@@ -26,9 +26,9 @@ jQuery(document).ready(function(){
 
     jQuery.ajax({
         url: STUDIP.URLHelper.getURL('plugins.php/achievements/index'),
-            success: function(data){
+            success: function(data) {
                 jQuery('body').append(data);
             }
-    });    
+    });
 });
 // </script>
