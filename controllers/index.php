@@ -27,9 +27,9 @@ class IndexController extends StudipController {
             $this->picturepath = $GLOBALS['CANONICAL_RELATIVE_PATH_STUDIP'] .'/'. $this->dispatcher->trails_root . '/images';
         } else {
             $this->picturepath = '/'. $this->dispatcher->trails_root . '/images';
-        }  
+        }
     }
-    
+
     function index_action($user_id = null)
     {
         // check for newly received trophys
@@ -37,6 +37,7 @@ class IndexController extends StudipController {
 
         // get already received achievements
         $received = AchievementsModel::getAchievements($user_id);
+        $xp = 0;
 
         foreach (Achievements::$registered_achievements as $achievements) {
             foreach ($achievements as $achievement_id) {
@@ -45,14 +46,24 @@ class IndexController extends StudipController {
                     $class_name = 'Achievement' . $achievement_id;
 
                     if (call_user_func(array($class_name, 'hasMetRequirements'), $user_id)) {
-                        AchievementsModel::giveAchievement($achievement_id);
+                        AchievementsModel::giveAchievement($achievement_id, $user_id);
                         $title = call_user_func(array($class_name, 'getTitle'));
                         $this->trophys[] = array(
                             'title'   => $title,
                             'picture' => AchievementsModel::getImage($class_name)
                         );
+
+                        if (strpos(strtolower($class_name)) == 'bronze') {
+                            $xp += 10;
+                        } else if (strpos(strtolower($class_name)) == 'silver') {
+                            $xp += 50;
+                        } else if (strpos(strtolower($class_name)) == 'gold') {
+                            $xp += 200;
+                        } else {
+                            $xp += 40;
+                        }
                     }
-                    
+
                     break;
                 }
             }
@@ -67,7 +78,7 @@ class IndexController extends StudipController {
         $this->set_layout($layout);
 
         PageLayout::setTitle('Meine Trophäen');
-        
+
         // get already received achievements
         $received = AchievementsModel::getAchievements();
 
@@ -92,9 +103,9 @@ class IndexController extends StudipController {
             }
         }
     }
-    
+
     function compare_action($compare_with = null) {
-        
+
         Navigation::activateItem('/profile/trophies/compare');
 
         $layout = $GLOBALS['template_factory']->open('layouts/base');
@@ -102,19 +113,19 @@ class IndexController extends StudipController {
         $this->compare_with = $compare_with;
 
         PageLayout::setTitle('Trophäen meiner Freunde');
-        
+
         foreach ((array)AchievementsModel::getAchievementsForUsers(Friends::get($GLOBALS['user']->id)) as $data) {
             $this->my_friends[$data['user_id']][$data['type']] = $data['trophys'];
         }
-        
+
         foreach (array($this->compare_with, $GLOBALS['user']->id) as $user_id) {
             $this->achievements[$user_id] = AchievementsModel::getAchievements($user_id);
         }
-        
+
         $this->all_achievements = AchievementsModel::getAllAchievements();
         $this->types = AchievementsModel::getAllTypes();
     }
-    
+
     function single_compare_action()
     {
         Navigation::activateItem('/profile/trophies');
@@ -129,16 +140,16 @@ class IndexController extends StudipController {
         foreach ((array)AchievementsModel::getAchievementsForUsers(Friends::get($GLOBALS['user']->id)) as $data) {
             $this->my_friends[$data['user_id']][$data['type']] = $data['trophys'];
         }
-        
+
         foreach (array($this->compare_with, $GLOBALS['user']->id) as $user_id) {
             $achievements[$user_id] = AchievementsModel::getAchievements($user_id);
         }
 
         $this->all_achievements = AchievementsModel::getAllAchievements();
     }
-    
+
     function js_action()
     {
-        
+
     }
 }

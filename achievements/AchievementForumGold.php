@@ -3,18 +3,18 @@
 class AchievementForumGold implements Achievement {
 
     public static function hasMetRequirements($user_id) {
-        $stmt = DBManager::get()->prepare("SELECT COUNT(*) FROM px_topics
-            WHERE user_id = ?"); 
+        $stmt = DBManager::get()->prepare("SELECT COUNT(*) FROM forum_entries
+            WHERE user_id = ?");
         $stmt->execute(array($user_id));
-        
+
         return $stmt->fetchColumn() > 50;
     }
-    
+
     public static function getProgress($user_id) {
-        $stmt = DBManager::get()->prepare("SELECT COUNT(*) FROM px_topics
-            WHERE user_id = ?"); 
+        $stmt = DBManager::get()->prepare("SELECT COUNT(*) FROM forum_entries
+            WHERE user_id = ?");
         $stmt->execute(array($user_id));
-        
+
         return sprintf(_("Du hast bisher %s Forums-Beiträge erstellt."), $stmt->fetchColumn());
     }
 

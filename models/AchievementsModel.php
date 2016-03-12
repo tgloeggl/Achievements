@@ -11,10 +11,10 @@ class AchievementsModel {
 
         return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
     }
-    
+
     /**
      *
-     * @param array $users 
+     * @param array $users
      */
     static function getAchievementsForUsers($users) {
         if (empty($users)) {
@@ -36,26 +36,24 @@ class AchievementsModel {
         if (!$user_id) $user_id = $GLOBALS['user']->id;
 
         $type = str_replace('.png', '', self::getImage('Achievement' . $achievement_id));
-        
-        var_dump($type);
-        
+
         $stmt = DBManager::get()->prepare("REPLACE INTO achievements
             (achievement_id, user_id, type) VALUES (?, ?, ?)");
         $stmt->execute(array($achievement_id, $user_id, $type));
     }
-    
+
     static function hasAchievement($achievement_id, $user_id = null) {
         static $achievements = array();
-        
+
         if (!$user_id) $user_id = $GLOBALS['user']->id;
-        
+
         if (!$achievements[$user_id]) {
             $stmt = DBManager::get()->prepare("SELECT achievement_id FROM achievements
                 WHERE user_id = ?");
             $stmt->execute(array($user_id));
             $achievements[$user_id] = $stmt->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_ASSOC);
         }
-        
+
         return in_array($achievement_id, $achievements[$user_id]) === false ? false : true;
     }
 
@@ -69,11 +67,11 @@ class AchievementsModel {
         </script>
         <?
     }
-    
+
     static function getImage($class_name)
     {
         $picture = 'bronze_trophy.png';
-        
+
         if (method_exists($class_name, 'getCustomImage')) {
             $picture = $class_name::getCustomImage();
         } else if (strpos($class_name, 'Silver') !== false) {
@@ -84,12 +82,12 @@ class AchievementsModel {
 
         return $picture;
     }
-    
+
     static function getAllAchievements()
     {
         return array_merge(array(Achievements::$notifiable_achievements), Achievements::$registered_achievements);
     }
-    
+
     static function getAllTypes()
     {
         return array(
@@ -101,7 +99,7 @@ class AchievementsModel {
         $stmt = DBManager::get()->query("SELECT DISTINCT type FROM achievements
             ORDER BY type ASC");
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
-         * 
+         *
          */
     }
 }

@@ -14,9 +14,9 @@
 
 class AchievementAssociationGold implements Achievement {
 
-    public static function hasMetRequirements($user_id) {           
+    public static function hasMetRequirements($user_id) {
         $stmt = DBManager::get()->prepare("SELECT COUNT(*)
-            FROM seminar_user 
+            FROM seminar_user
             WHERE seminar_id = 'a9fdca48b9a972fbb12408afdc17c9d5'
                 AND user_id = ?");
         $stmt->execute(array($user_id));
@@ -25,17 +25,17 @@ class AchievementAssociationGold implements Achievement {
     }
 
     public static function getProgress($user_id) {
-        return _('Leider bist du kein Vereins-Mitglied.');
+        return _('Leider bist du kein Stud.IP e.V. Mitglied.');
     }
 
     public static function getTitle() {
-        return _("Du bist ein Vereins-Mitglied.");
+        return _("Du bist ein Stud.IP e.V. Mitglied.");
     }
 
     public static function getDescription() {
-        return _('Diese Trophäe erhalten nur Vereins-Mitglieder.');
+        return _('Diese Trophäe erhalten nur Stud.IP e.V. Mitglieder.');
     }
-    
+
     public static function getCustomImage() {
         return 'gold_medal.png';
     }
